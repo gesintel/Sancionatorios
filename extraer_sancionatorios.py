@@ -59,8 +59,8 @@ def leer_y_buscar_registros():
         subcategoria = row.SubCategoriaEconomicaNombre
         link_uf = row.LinkSNIFA_UF
         actualizacion = row.FechaActualizacion
-        comuna = row.RegionNombre
-        region = row.ComunaNombre
+        comuna = row.ComunaNombre
+        region = row.RegionNombre
         logging.info(f"Buscando num expediente: {num_expediente} con nombre {nombre}")
         driver.get(link)
         try:
@@ -129,7 +129,7 @@ def leer_y_buscar_registros():
                         hecho = row['Hecho'].replace('"""', '').replace('"', '')
                         hecho = re.sub(patron, '', hecho)
                         hecho = hecho.replace(':', '').strip()
-                        texto = row['Clasificación(Art. 36 LOSMA)'].split(',')[0]
+                        texto = row['Clasificación(Art. 36 LOSMA)']
 
                         patron_clasificacion = re.compile(r'(Leves|Graves|Gravísimas)', re.IGNORECASE)
                         try:
@@ -138,7 +138,8 @@ def leer_y_buscar_registros():
                         except TypeError:
                             logging.warning('La columna clasificacion de la tabla de hecho, esta vacia')
                             clasificaciones_str= ''
-                            
+                        clasificaciones_str= clasificaciones_str.split(',')[0]        
+                        
                         nuevo_registro = {'Data_field': correlativo, 'Original_URL': url_actual, 'Hecho': hecho, 
                                 'Clasificacion_Art_36_LOSM': clasificaciones_str, 'ProcesoSancionId': proceso_sancion_id, 'Expediente': num_expediente,
                                 'ProcesoSancionTipoNombre': proceso_sancion, 'ProcesoSancionEstado': estado, 'FechaInicio': fecha_inicio,
