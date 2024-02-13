@@ -18,9 +18,24 @@ def descargar_archivo_sancionatorio():
     time.sleep(1)
     sancionatorios = '/html/body/div[6]/div/div/div[2]/div/div[1]/div[1]/div[3]/div/a'
     click(driver.find_element_by_xpath(sancionatorios))
-    time.sleep(1)
-    click(driver.find_element_by_xpath('//*[@id=":1"]/div/c-wiz/div[2]/c-wiz/div[1]/c-wiz/div[2]/c-wiz/div[1]/c-wiz/c-wiz/div/c-wiz[3]/div/div/div/div[6]/div/span'))
-    time.sleep(10)
+    time.sleep(5)
+    clase_boton = "h-sb-Ic"
+    boton_descargar_todo = driver.find_element_by_class_name(clase_boton)
+    click(boton_descargar_todo)
+    time.sleep(15)
+    archivos_zip = [archivo for archivo in os.listdir(ruta_archivo) if archivo.endswith('.zip')]
+    archivo_zip = archivos_zip[0]
+    with zipfile.ZipFile(os.path.join(ruta_archivo, archivo_zip), 'r') as zip_ref:
+        zip_ref.extractall(ruta_archivo)
+
+    os.remove(os.path.join(ruta_archivo, archivo_zip))
+    carpeta_sancionatorios = os.path.join(ruta_archivo, 'Sancionatorios')
+    for archivo in os.listdir(carpeta_sancionatorios):
+        if archivo.endswith('.xlsx'):
+            ruta_origen = os.path.join(carpeta_sancionatorios, archivo)
+            ruta_destino = os.path.join('/home/ubuntu/Sancionatorios/Reportes', archivo)
+            shutil.move(ruta_origen, ruta_destino)
+    shutil.rmtree(carpeta_sancionatorios)
     kill_browser()
     
     nuevo_nombre = f'Sancionatorios_{fecha_actual}.xlsx'
